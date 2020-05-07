@@ -1,3 +1,4 @@
+import argparse
 from utils import *
 from segpose_net import SegPoseNet
 import cv2
@@ -51,15 +52,24 @@ def evaluate(data_cfg, weightfile, listfile, outdir, object_names, intrinsics, v
         print('%s: Visualization in %f seconds.' % (imgfile, (vis_finish - vis_start)))
 
 if __name__ == '__main__':
-    # use_gpu = True
-    use_gpu = False
-    #
-    dataset = 'Occluded-LINEMOD'
-    outdir = './Occluded-LINEMOD-Out'
-    #
-    # dataset = 'YCB-Video'
-    # outdir = './YCB-Video-Out'
-    #
+    # arguments parsing
+    argparser = argparse.ArgumentParser(description=__doc__)
+    argparser.add_argument('-gpu', '--use_gpu', type=bool, help='set to true to use gpu, otherwise use cpu', default=True)
+    argparser.add_argument('-ds', '--dataset', type=str, help='dataset to be used for train or test', default='linemod')
+
+    args = argparser.parse_args()
+
+    use_gpu = args.use_gpu
+
+    if args.dataset == 'linemod':
+        dataset = 'Occluded-LINEMOD'
+        outdir = './Occluded-LINEMOD-Out'
+    elif args.dataset == 'ycb':
+        dataset = 'YCB-Video'
+        outdir = './YCB-Video-Out'
+    elif args.dataset == 'custom':
+        dataset = 'Custom'
+        
     if dataset == 'Occluded-LINEMOD':
         # intrinsics of LINEMOD dataset
         k_linemod = np.array([[572.41140, 0.0, 325.26110],
@@ -92,5 +102,7 @@ if __name__ == '__main__':
                              './ycb-video-testlist.txt',
                              outdir, object_names_ycbvideo, k_ycbvideo, vertex_ycbvideo,
                              bestCnt=10, conf_thresh=0.3, use_gpu=use_gpu)
+    elif dataset == 'Custom':
+        pass
     else:
         print('unsupported dataset \'%s\'.' % dataset)
