@@ -1,5 +1,5 @@
-
 def parse_cfg(cfgfile):
+    # parse DarkNet config file
     blocks = []
     fp = open(cfgfile, 'r')
     block =  None
@@ -161,10 +161,3 @@ def print_cfg(blocks, width, height, channels):
             out_filters.append(prev_filters)
         else:
             print('unknown type %s' % (block['type']))
-
-if __name__ == '__main__':
-    import sys
-    blocks = parse_cfg('cfg/yolov3.cfg')
-    if len(sys.argv) == 2:
-        blocks = parse_cfg(sys.argv[1])
-    print_cfg(blocks)
